@@ -13,13 +13,13 @@ public class UnaryHubVarIssueTest
     public async Task Add()
     {
         ISignalRConnection holder = new SignalRConnection();
-        await holder.InitializeAsync();
+        await holder.InitializeAsync("Hubs/UnaryHubVarIssue");
 
         HubConnection conn = holder.Connection;
 
         var hub = conn.CreateHubProxy<IUnaryHubVarIssue>();
 
-        var res = hub.Add(2,3);
+        var res = await hub.Add(2,3);
         Assert.Equal(res,5);
         // case 1. holder's type is ConnectionHolder
         //var holder = new ConnectionHolder();
@@ -94,9 +94,8 @@ public sealed class SignalRConnection : ISignalRConnection
                 InvalidOperationException("Hub connection is already initialized");
         }
 
-        var url = new Uri("http://localhost:5105", "Hubs/UnaryHubVarIssue");
         _hubConnection = new HubConnectionBuilder()
-                         .WithUrl(url, options =>
+                         .WithUrl($"http://localhost:5105/{hubRoute}", options =>
                          {
                              options.AccessTokenProvider = async () =>
                              {
