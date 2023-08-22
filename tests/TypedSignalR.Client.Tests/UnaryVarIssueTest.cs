@@ -12,41 +12,15 @@ public class UnaryHubVarIssueTest
     [Fact]
     public async Task Add()
     {
-        ISignalRConnection holder = new SignalRConnection();
+        await using ISignalRConnection holder = new SignalRConnection();
         await holder.InitializeAsync("Hubs/UnaryHubVarIssue");
 
-        HubConnection conn = holder.Connection;
+        var conn = holder.Connection;
 
         var hub = conn.CreateHubProxy<IUnaryHubVarIssue>();
 
         var res = await hub.Add(2,3);
-        Assert.Equal(res,5);
-        // case 1. holder's type is ConnectionHolder
-        //var holder = new ConnectionHolder();
-
-        //case 2. holder's type is IConnectionHolder
-        //var holder = ConnectionHolder.Create();
-
-        // ---------
-
-        // case 1. use var
-        //var connection = holder.HubConnection;
-        //var hubProxy = connection.CreateHubProxy<IUnaryHub3>();
-
-        // case 2. use property directly
-        //var hubProxy = holder.HubConnection.CreateHubProxy<IUnaryHub3>();
-
-        //await holder.HubConnection.StartAsync();
-
-        //var x = Random.Shared.Next();
-        //var y = Random.Shared.Next();
-
-        //var added = await hubProxy.Add(x, y);
-
-        //Assert.Equal(added, x + y);
-
-        //await holder.HubConnection.StopAsync();
-        //await holder.HubConnection.DisposeAsync();
+        Assert.Equal(5, res);
     }
 }
 
@@ -101,8 +75,9 @@ public sealed class SignalRConnection : ISignalRConnection
                              {
                                 // get token provider from services...
                                 // fake here
+                                var token = await Task.FromResult("abc123");
 
-                                return "abc123";
+                                return token;
                              };
                          })
                          .WithAutomaticReconnect()
