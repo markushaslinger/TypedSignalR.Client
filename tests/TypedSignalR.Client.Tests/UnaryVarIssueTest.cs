@@ -56,7 +56,7 @@ public interface ISignalRConnection : IAsyncDisposable
     Task InitializeAsync(string hubRoute);
 }
 
-public sealed class SignalRConnection() : ISignalRConnection
+public sealed class SignalRConnection : ISignalRConnection
 {
     private HubConnection? _hubConnection;
     private bool _initialized;
